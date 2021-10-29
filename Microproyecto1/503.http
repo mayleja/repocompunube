@@ -1,0 +1,8 @@
+HTTP/1.0 503 Forbidden
+Cache-Control: no-cache
+Connection: close
+Content-Type: text/html
+
+<html><body><h1>503 Ningun servidor disponible</h1>
+Ofrecemos disculpas por esta situacion
+</body></html>
