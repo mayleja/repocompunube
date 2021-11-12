@@ -1,0 +1,100 @@
+############################1. Implementación de cluster Kubernetes en Azure##################################
+
+#####Desde club shell#####
+az account set --subscription 473789d6-aa31-4201-9f2f-2fb83516a576
+az aks get-credentials --resource-group microproyecto2 --name cluster1
+
+kubectl get nodes -o wide
+
+#####Desde la CLI de Azure#####
+az login
+
+az aks install-cli
+
+#se debe tomar lo de la panatalla
+set PATH=%PATH%;C:\Users\57316\.azure-kubectl
+set PATH=%PATH%;C:\Users\57316\.azure-kubelogin
+
+#get credencial
+az aks get-credentials --resource-group microproyecto2 --name cluster1
+
+
+kubectl get nodes -o wide
+
+############################2. Aplicación de clasificación de imágenes en Azure##################################
+
+####imagine classifier
+git clone https://github.com/omondragon/pytorch-kubernetes
+kubectl apply -f image-classifier.yaml
+
+kubectl get services --all-namespaces
+
+kubectl describe pods image-classifier -n example
+
+curl -X POST -d '{"url": "https://i.imgur.com/jD2hDMc.jpg"}' -H 'Content-Type: application/json' http://10.101.104.116/predict
+
+############################3. Aplicación de su interés en Azure##################################
+
+git clone https://github.com/Azure-Samples/azure-voting-app-redis
+kubectl apply -f azure-vote-all-in-one-redis.yaml
+
+kubectl get services --all-namespaces
+
+############################3. Aplicación deep learning en Azure############################
+mkdir deep_learning
+cd deep_learning
+vim deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubermatic-dl-deployment
+spec:
+  selector:
+    matchLabels:
+      app: kubermatic-dl
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kubermatic-dl
+    spec:
+     containers:
+     - name: kubermatic-dl
+       image: kubermatic00/kubermatic-dl:latest
+       imagePullPolicy: Always
+       ports:
+       - containerPort: 8080
+
+kubectl apply -f deployment.yaml
+
+kubectl expose deployment kubermatic-dl-deployment  --type=LoadBalancer --port 80 --target-port 5000
+
+kubectl get services --all-namespaces
+
+curl https://opensource.com/sites/default/files/uploads/horse.jpg --output horse.jpg
+
+curl -X POST -F img=@horse.jpg http://52.186.160.148/predict
+
+curl https://opensource.com/sites/default/files/uploads/dog.jpg --output dog.jpg
+
+curl -X POST -F img=@dog.jpg http://20.84.7.114/predict
+___________________
+
+
+kubectl get deployments --all-namespaces=true
+kubectl get services --all-namespaces
+kubectl get pods --all-namespaces
+
+kubectl delete svc <nombre service>
+kubectl delete deploy <nombre deploy>
+
+kubectl delete service,deployment image-classifier -n example
+
+kubectl delete service,deployment kubermatic-dl-deployment -n default
+
+kubectl delete service,deployment azure-vote-back -n default
+kubectl delete service,deployment azure-vote-front -n default
+
+
+
